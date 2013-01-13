@@ -1,0 +1,22 @@
+<html>
+
+<title> Post-Mortem </title>
+
+<body>
+	{% if form.errors %}
+                Please fix the following fields:
+                <ul>
+                        {% for error in form.errors %}
+                                <li> {{error}} </li>
+                        {% endfor %}
+                </ul>
+        {% endif %}
+
+	<form action = "" method = "post">{% csrf token %}
+		<table>
+			{{ form.as_table }}
+		</table>
+	</form>
+</body>
+
+</html>

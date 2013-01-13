@@ -5,7 +5,7 @@ import views
 # from django.contrib import admin
 # admin.autodiscover()
 
-urlpatterns = patterns('',('^$', views.home),('^deathnote$', views.deathnote),('^sign/$', views.sign),
+urlpatterns = patterns('',('^$', views.note_write),('^note_edit$', views.note_edit)#('^note_read$', views.note_read),
     # Examples:
     # url(r'^$', 'deathnote.views.home', name='home'),
     # url(r'^deathnote/', include('deathnote.foo.urls')),
