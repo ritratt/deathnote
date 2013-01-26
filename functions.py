@@ -10,13 +10,13 @@ def generatekey(password,IV):
    		key = PBKDF2(password,IV).read(32)
         	return key
 
-def encipher(user_email, note, password):
+def encipher(mode, user_email, note, password):
 	
 	#Encrypt note.
 	iv = SHA256.new(str(random.randint(0, 2**60))).hexdigest()[0:16]
         key = PBKDF2(password, iv).read(32)
         cipher = AES.new(key, AES.MODE_CFB, iv)
-        encrypted_note =cipher.encrypt(note)
+        encrypted_note = cipher.encrypt(note)
 	
 	#Write encrypted_note to disk.
 	note_write_set(user_email, encrypted_note, iv)
@@ -42,7 +42,10 @@ def encipher(user_email, note, password):
 	store_b(user_email, encrypted_note_b, piece_hash)
 
 	#Return piece to display on webpage.
-	return piece
+	if mode == 'write':
+		return piece
+	elif mode == 'edit':
+		return encrypted_note
 
 
 def decipher(mode, user_email, password):
@@ -60,8 +63,6 @@ def decipher(mode, user_email, password):
 			decrypted_note = cipher.decrypt(encrypted_note)
 			return decrypted_note
 		else:
-			print 'check = '+hash_tocheck
-			print 'correct ='+ hash_correct
 			return False
 
 def write_set(user_email, pwd_hsh , salt):
@@ -74,7 +75,11 @@ def write_get(user_email):
 	
 def note_write_set(user_email, encrypted_note, iv):
 	db_note_read_set = redis.StrictRedis(host='localhost', port=6379, db = 2)
-	db_note_read_set.rpush(user_email, encrypted_note, iv)
+	if write_get(user_email):
+		db_note_read_set.lset(user_email, 0, encrypted_note)
+		db_note_read_set.lset(user_email, 1, iv)
+	else:
+		db_note_read_set.rpush(user_email, encrypted_note, iv)
 
 def note_write_get(user_email):
 	db_note_write_get = redis.StrictRedis(host = 'localhost', port = 6379, db = 2)
