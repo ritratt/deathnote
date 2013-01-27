@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from deathnote.forms import SignForm, EditAuthForm, EditForm
+from deathnote.forms import SignForm, EditAuthForm, EditForm, ReadForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.context_processors import csrf
 from django.template import RequestContext
@@ -7,6 +7,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from deathnote.functions import encipher, decipher, write_set
 from deathnote.functions import *
+from django.db import IntegrityError
 
 def home(request):
 	try:
@@ -22,8 +23,11 @@ def note_write(request):
 			email = form.cleaned_data['email']
 			deathnote = form.cleaned_data['deathnote']
 			password = form.cleaned_data['password']
-			user = User.objects.create_user(username = email, password = password)
-			user.save()
+			try:
+				user = User.objects.create_user(username = email, password = password)
+				user.save()
+			except IntegrityError:
+				return HttpResponse('User already exists.')
 			piece = encipher('write', email, deathnote, password)
 			return render_to_response('confirmation.htm', {'user':form['email'], 'piece':piece})
 	else:
@@ -37,7 +41,7 @@ def note_edit_auth(request):
 			email = form.cleaned_data['email']
 			password = form.cleaned_data['password']
 			user = auth.authenticate(username = email, password = password)
-			if user.is_authenticated():
+			if user and user.is_authenticated():
 				decrypted_note = decipher('write', email, password)
 				request.session['decrypted_note'] = decrypted_note
 				request.session['email'] = email
@@ -45,22 +49,39 @@ def note_edit_auth(request):
 				request.session['user'] = user
 				return HttpResponseRedirect('/note_edit')
 			else:
-				return HttpResponse('dafq')
+				return HttpResponse('User or password is either incorrect or does not exist.')
 	else:
 		form = EditAuthForm()
 	return render_to_response('editauth.htm', {'form':form}, context_instance = RequestContext(request))
 
 def note_edit(request):
-	user = request.session['user']
-	if request.method == 'POST':
+	if request.method == 'POST' and request.user.is_authenticated():
 		form_edit = EditForm(request.POST)
 		new_note = request.POST['decrypted_note']
 		user = request.session['email']
 		encrypted_note = encipher('edit', user, new_note, request.session['password'])
+		auth.logout(request)
 		return HttpResponse('Done!')
-	elif request.method == 'GET' and user.is_authenticated():
+	elif request.method == 'GET' and request.user.is_authenticated():
 		form_edit = EditForm({'decrypted_note' : request.session['decrypted_note']})
+	else:
+		return HttpResponse('User not authenticated.')
 	return render_to_response('editnote.htm', {'form': form_edit}, context_instance = RequestContext(request))
 
 def edit_conf(request):
 	return HttpResponse('haha')
+
+def note_read(request):
+	if request.method == 'POST':
+		form_read = ReadForm(request.POST)
+		if form_read.is_valid():
+			email_deceased = form_read.cleaned_data['email_deceased']
+			piece = form_read.cleaned_data['piece']
+			note = decipher('read', email_deceased, piece)
+			print note
+			if not note:
+				return HttpResponse('wrong')
+			return HttpResponse(note)
+	else:
+			form_read = ReadForm()
+	return render_to_response('readnote.htm', {'form': form_read}, context_instance = RequestContext(request))

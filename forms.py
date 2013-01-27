@@ -16,3 +16,7 @@ class EditAuthForm(forms.Form):
 	
 class EditForm(forms.Form):
 	decrypted_note = forms.CharField(widget = forms.Textarea)
+
+class ReadForm(forms.Form):
+	email_deceased = forms.EmailField()
+	piece = forms.CharField( widget = forms.PasswordInput(render_value = False), label = 'Piece')
