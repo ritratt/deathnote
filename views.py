@@ -43,10 +43,12 @@ def note_edit_auth(request):
 			user = auth.authenticate(username = email, password = password)
 			if user and user.is_authenticated():
 				decrypted_note = decipher('write', email, password)
+				print decrypted_note
 				request.session['decrypted_note'] = decrypted_note
 				request.session['email'] = email
 				request.session['password'] = password
 				request.session['user'] = user
+				auth.login(request, user)
 				return HttpResponseRedirect('/note_edit')
 			else:
 				return HttpResponse('User or password is either incorrect or does not exist.')
