@@ -59,7 +59,7 @@ def note_edit(request):
 		form_edit = EditForm(request.POST)
 		new_note = request.POST['decrypted_note']
 		user = request.session['email']
-		encrypted_note = encipher('edit', user, new_note, request.session['password'])
+		encipher('edit', user, new_note, request.session['password'])
 		auth.logout(request)
 		return HttpResponse('Done!')
 	elif request.method == 'GET' and request.user.is_authenticated():
