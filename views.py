@@ -5,7 +5,7 @@ from django.core.context_processors import csrf
 from django.template import RequestContext
 from django.contrib import auth
 from django.contrib.auth.models import User
-from deathnote.functions import encipher, decipher, write_set
+from deathnote.functions import encipher, decipher
 from deathnote.functions import *
 from django.db import IntegrityError
 
@@ -43,11 +43,9 @@ def note_edit_auth(request):
 			user = auth.authenticate(username = email, password = password)
 			if user and user.is_authenticated():
 				decrypted_note = decipher('write', email, password)
-				print decrypted_note
 				request.session['decrypted_note'] = decrypted_note
 				request.session['email'] = email
 				request.session['password'] = password
-				request.session['user'] = user
 				auth.login(request, user)
 				return HttpResponseRedirect('/note_edit')
 			else:
@@ -80,7 +78,6 @@ def note_read(request):
 			email_deceased = form_read.cleaned_data['email_deceased']
 			piece = form_read.cleaned_data['piece']
 			note = decipher('read', email_deceased, piece)
-			print note
 			if not note:
 				return HttpResponse('wrong')
 			return HttpResponse(note)

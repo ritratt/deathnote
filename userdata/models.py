@@ -12,4 +12,5 @@ class Deathbook(models.Model):
 	deathnote_read = models.TextField()
 	iv_read = models.CharField(max_length = 255)
 	piece_hash = models.CharField(max_length = 255)
+	encrypted_piece = models.CharField(max_length = 255)
  
