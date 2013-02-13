@@ -28,7 +28,7 @@ def dcrypt(password, payload, iv, DECODE_FLAG):
 	decrypted = cipher.decrypt(payload)
 	return decrypted
 
-def encipher(mode, user_email, note, password):
+def encipher(mode, user_email, note, password, ntrustees = 1):
 	
 	if mode == 'write':
 		#Encrypt note with user's password.
@@ -38,9 +38,17 @@ def encipher(mode, user_email, note, password):
 		#Second encryption to enable bereaved to view deathnote.
 		ascii_printable = list(string.letters + string.digits + '`~!@#$%^&*()-_=+[{]}\|;:''",<.>/?')
 		password_read = ''.join(random.choice(ascii_printable) for i in range(32))
+		p = []
+		with open('words.txt') as f:
+			words = f.read()
+		words = words.split('\n')
+		for i in range(ntrustees):
+				p.append(words[random.randint(0,len(words))])
+				p.append(' ')
+		password_read = ''.join(p[:])
 		iv_read = SHA256.new(str(random.randint(0, 2**60))).hexdigest()[0:16]
-		encrypted_note_read = ncrypt(password, note, iv_read, 1) 
-		piece = iv_read + password_read		#This will act as the password that the user will give to people of his choice.
+		encrypted_note_read = ncrypt(password_read, note, iv_read, 1) 
+		piece = password_read		#This will act as the password that the user will give to people of his choice.
 
 		#Encrypt the "piece" with the user's password so that it can be used to edit the read-only encrypted note in the future.
 		encrypted_piece = ncrypt(password, piece, iv_write, 1)
@@ -52,7 +60,7 @@ def encipher(mode, user_email, note, password):
 		return piece
 
 	elif mode == 'edit':
-		#Retrieve encrypted read only password, piece.
+		#Retrieve encrypted read only password i.e. piece.
 		temp_row = Deathbook.objects.get(user_email = user_email)
 		encrypted_piece = temp_row.encrypted_piece
 		iv_write = temp_row.iv_write
@@ -60,7 +68,7 @@ def encipher(mode, user_email, note, password):
 
 		#Replace old encrypted read only note with the new note encrypted with the piece retrieved earlier.
 		iv_read = temp_row.iv_read
-		encrypted_note_read = ncrypt(piece[16:], note, iv_read, 1)
+		encrypted_note_read = ncrypt(piece, note, iv_read, 1)
 		temp_row.deathnote_read = encrypted_note_read
 		
 		#Encrypt and replace old encrypted write note with the new one.
@@ -92,7 +100,7 @@ def decipher(mode, user_email, password):
 			return False
 		encrypted_note_read = userdata_row.deathnote_read
 		iv_read = userdata_row.iv_read
-		decrypted_note = dcrypt(password[16:], encrypted_note_read, iv_read, 1)
+		decrypted_note = dcrypt(password, encrypted_note_read, iv_read, 1)
 		return decrypted_note
 
 

@@ -1,13 +1,13 @@
 <html>
 
-<title> Read Note</title>
+<title> Read Note Authentication </title>
 
 <body>
 	<form action = "" method = "post">{% csrf_token %}
 		<table>
-			{{ note }}
+			{{ form.as_table }}
 		</table>
-		<input type = "submit" value="Logout">
+		<input type = "submit" value = "Submit">
 	</form>
 </body>
 
