@@ -14,7 +14,7 @@ from django.core.mail import send_mail
 def home(request):
 	try:
 		response = 'Requested through ' + str(request.META['HTTP_USER_AGENT']) + ' browser.'
-		return HttpResponse(response)
+		return render_to_response('home.htm')
 	except KeyError:
 		return HttpResponse('No idea.')
 
@@ -37,7 +37,7 @@ def note_write(request):
 			return render_to_response('confirmation.htm', {'user':email, 'piece':piece})
 	else:
 		form = SignForm()
-	return render_to_response('home.htm', {'form':form}, context_instance = RequestContext(request))
+	return render_to_response('new.htm', {'form':form}, context_instance = RequestContext(request))
 
 def note_edit_auth(request):
 	if request.method == 'POST':
@@ -48,6 +48,7 @@ def note_edit_auth(request):
 			user = auth.authenticate(username = email, password = password)
 			if user and user.is_authenticated():
 				decrypted_note = decipher('write', email, password)
+
 				request.session['decrypted_note'] = decrypted_note
 				request.session['email'] = email
 				request.session['password'] = password

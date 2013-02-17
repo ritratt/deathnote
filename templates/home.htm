@@ -1,22 +1,15 @@
 <html>
-<title>Deathnote app</title>
+
+<title> Deathnote Home </title>
 
 <body>
-	{% if form.errors %}
-		Please fix the following fields: 
-		<ul>
-			{% for error in form.errors %}
-				<li> {{error}} </li>
-			{% endfor %}
-		</ul>
-	{% endif %}
-	
-	<form action="" method="post">{% csrf_token %}
-		<table>
-			{{ form.as_table }}
-		</table>
-		<input type="submit" value="Sign Note">
-	</form>
-</body>
 
-</html>
+	<table>
+	<a href="/new">Create new note as a new user</a>
+	<br>
+	<a href="/note_edit_auth">Edit existing note</a>
+	<br>
+	<a href="/note_read_auth">Read note left by someone for you</a>
+	</table>
+</body>
+</title>
