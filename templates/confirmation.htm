@@ -1,7 +1,18 @@
 <html>
+<head>
 <title> Deathnote confirmation page for {{ user }} </title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body>
-	Congratulations {{ user }}! Your note has been signed. Your alternate read-only decryption is {{ piece }}.
+	Congratulations <strong>{{ user }}</strong>! Your note has been signed. Your alternate read-only decryption key parts are :
+<div class="hero-unit">
+<ol>
+	{% for part in piece %}
+	<li>{{ part }} </li>
+	{% endfor %}
+</ol>
+</div>
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 </body>
 </html>

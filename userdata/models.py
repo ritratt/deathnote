@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Deathbook(models.Model):
-	user_email = models.EmailField(primary_key = True)
+	user_email = models.EmailField(primary_key = True, unique = True, error_messages = {'unique':'snbjusb'})
 
 	#Fields for write access and operations.
 	deathnote_write = models.TextField()

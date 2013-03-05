@@ -1,22 +1,25 @@
+<!DOCTYPE HTML>
 <html>
-<title>Deathnote app</title>
+<head>
 
+<title>Deathnote app</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body>
-	{% if form.errors %}
-		Please fix the following fields: 
-		<ul>
-			{% for error in form.errors %}
-				<li> {{error}} </li>
-			{% endfor %}
-		</ul>
-	{% endif %}
-	
+<div class="page-header"> 
+	<h2>Registration</h2>
+</div>
+{% load bootstrap_toolkit %}
+<div class="hero-unit">
 	<form action="" method="post">{% csrf_token %}
 		<table>
-			{{ form.as_table }}
+			{{ specialmsg }}
+			{{ form|as_bootstrap }}
 		</table>
-		<input type="submit" value="Sign Note">
+		<button class="btn btn-primary" type="submit">Sign Note</button>
 	</form>
+</div>
 </body>
 
 </html>

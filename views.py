@@ -9,6 +9,8 @@ from deathnote.functions import encipher, decipher
 from deathnote.functions import *
 from django.db import IntegrityError
 from django.core.mail import send_mail
+from django import forms
+from django.core import validators
 
 
 def home(request):
@@ -19,6 +21,7 @@ def home(request):
 		return HttpResponse('No idea.')
 
 def note_write(request):
+	specialmsg = ''
 	if request.method == 'POST':
 		form = SignForm(request.POST)
 		if form.is_valid():
@@ -30,14 +33,16 @@ def note_write(request):
 				user = User.objects.create_user(username = email, password = password)
 				user.save()
 			except IntegrityError:
-				return HttpResponse('User already exists.')
+				specialmsg = 'User already exists!'
+				form = SignForm(request.POST)
+				return render_to_response('new.htm', {'form':form, 'specialmsg':specialmsg}, context_instance = RequestContext(request))
 			piece = encipher('write', email, deathnote, password, ntrustees)
-			send_mail('Deathnote update', 'Your note is saved. Your read only key for distribution is:\n ' + piece, 'save.my.deathnote@gmail.com',
+			send_mail('Deathnote update', 'Your note is saved. Your read only key for distribution is:\n ' + ''.join(piece[:]), 'save.my.deathnote@gmail.com',
     [email], fail_silently=False)
 			return render_to_response('confirmation.htm', {'user':email, 'piece':piece})
 	else:
 		form = SignForm()
-	return render_to_response('new.htm', {'form':form}, context_instance = RequestContext(request))
+	return render_to_response('new.htm', {'form':form, 'specialmsg':specialmsg}, context_instance = RequestContext(request))
 
 def note_edit_auth(request):
 	if request.method == 'POST':

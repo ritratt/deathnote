@@ -37,22 +37,21 @@ def encipher(mode, user_email, note, password, ntrustees = 1):
 
 		#Second encryption to enable bereaved to view deathnote.
 		ascii_printable = list(string.letters + string.digits + '`~!@#$%^&*()-_=+[{]}\|;:''",<.>/?')
-		password_read = ''.join(random.choice(ascii_printable) for i in range(32))
-		p = []
+		piece = []
 		with open('words.txt') as f:
 			words = f.read()
 		words = words.split('\n')
+		size = len(words)
 		for i in range(ntrustees):
-				p.append(words[random.randint(0,len(words))])
-				p.append(' ')
-		password_read = ''.join(p[:])
+				piece.append(words[random.randint(0,size)])
+		password_read = ''.join(piece[:])
 		iv_read = SHA256.new(str(random.randint(0, 2**60))).hexdigest()[0:16]
 		encrypted_note_read = ncrypt(password_read, note, iv_read, 1) 
-		piece = password_read		#This will act as the password that the user will give to people of his choice.
+		
 
 		#Encrypt the "piece" with the user's password so that it can be used to edit the read-only encrypted note in the future.
-		encrypted_piece = ncrypt(password, piece, iv_write, 1)
-		piece_hash = SHA256.new(piece).hexdigest()
+		encrypted_piece = ncrypt(password, password_read, iv_write, 1)
+		piece_hash = SHA256.new(password_read).hexdigest()
 
 		#Create row in the database for the user with all the data.
 		userdata_row = Deathbook(user_email = user_email, deathnote_write = encrypted_note, iv_write = iv_write,deathnote_read = encrypted_note_read, iv_read = iv_read, piece_hash = piece_hash, encrypted_piece = encrypted_piece)

@@ -3,6 +3,7 @@
 import os.path
 
 DEBUG = True
+#DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -13,11 +14,11 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dndb',                      # Or path to database file if using sqlite3.
-        'USER': 'admin',                      # Not used with sqlite3.
-        'PASSWORD': 'r',                  # Not used with sqlite3.
-        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'database.db',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -67,10 +68,9 @@ STATIC_URL = '/static/'
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Additional locations of static files
-STATICFILES_DIRS = (
+STATICFILES_DIRS = (os.path.join(os.path.dirname(__file__), 'static').replace('\\','/'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -85,7 +85,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '<hidden>'
+SECRET_KEY = '_vluj0l0-dbnu(7e$-x6mtaep5y#5j2&r$baoiu_h99y^0i$is'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'deathnote.userdata',
+    'bootstrap_toolkit',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -152,4 +153,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'save.my.deathnote@gmail.com'
-EMAIL_HOST_PASSWORD = 'tempfornow'
+EMAIL_HOST_PASSWORD = 'nottempanymore'

@@ -1,15 +1,22 @@
+<!DOCTYPE html>
 <html>
+<head>
+	<title> Deathnote Home </title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
 
-<title> Deathnote Home </title>
-
+</head>
+ 
 <body>
-
-	<table>
-	<a href="/new">Create new note as a new user</a>
+<div class="page-header"><h1> Deathnote Home</h1> </div>
+<div class="container">
+	<h3><a href="/new">Create new note as a new user</a>
 	<br>
 	<a href="/note_edit_auth">Edit existing note</a>
 	<br>
 	<a href="/note_read_auth">Read note left by someone for you</a>
-	</table>
+	</h3>
+</div>
 </body>
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 </title>
